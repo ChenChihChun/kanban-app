@@ -3,24 +3,39 @@
 import { useState } from 'react';
 import { Plus, X, GripVertical } from 'lucide-react';
 
+interface Task {
+  id: number;
+  content: string;
+  createdAt: string;
+}
+
+interface Tasks {
+  backlog: Task[];
+  todo: Task[];
+  doing: Task[];
+  done: Task[];
+}
+
+type ColumnId = 'backlog' | 'todo' | 'doing' | 'done';
+
 const COLUMNS = [
-  { id: 'backlog', title: 'Backlog', color: 'bg-gray-100' },
-  { id: 'todo', title: 'Todo', color: 'bg-blue-100' },
-  { id: 'doing', title: 'Doing', color: 'bg-yellow-100' },
-  { id: 'done', title: 'Done', color: 'bg-green-100' }
+  { id: 'backlog' as ColumnId, title: 'Backlog', color: 'bg-gray-100' },
+  { id: 'todo' as ColumnId, title: 'Todo', color: 'bg-blue-100' },
+  { id: 'doing' as ColumnId, title: 'Doing', color: 'bg-yellow-100' },
+  { id: 'done' as ColumnId, title: 'Done', color: 'bg-green-100' }
 ];
 
 export default function KanbanBoard() {
-  const [tasks, setTasks] = useState({
+  const [tasks, setTasks] = useState<Tasks>({
     backlog: [],
     todo: [],
     doing: [],
     done: []
   });
   const [newTask, setNewTask] = useState('');
-  const [draggedTask, setDraggedTask] = useState(null);
+  const [draggedTask, setDraggedTask] = useState<{ columnId: ColumnId; task: Task } | null>(null);
 
-  const addTask = (columnId) => {
+  const addTask = (columnId: ColumnId) => {
     if (!newTask.trim()) return;
     
     setTasks(prev => ({
@@ -34,24 +49,24 @@ export default function KanbanBoard() {
     setNewTask('');
   };
 
-  const deleteTask = (columnId, taskId) => {
+  const deleteTask = (columnId: ColumnId, taskId: number) => {
     setTasks(prev => ({
       ...prev,
       [columnId]: prev[columnId].filter(task => task.id !== taskId)
     }));
   };
 
-  const handleDragStart = (e, columnId, task) => {
+  const handleDragStart = (e: React.DragEvent, columnId: ColumnId, task: Task) => {
     setDraggedTask({ columnId, task });
     e.dataTransfer.effectAllowed = 'move';
   };
 
-  const handleDragOver = (e) => {
+  const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
   };
 
-  const handleDrop = (e, targetColumnId) => {
+  const handleDrop = (e: React.DragEvent, targetColumnId: ColumnId) => {
     e.preventDefault();
     if (!draggedTask) return;
 
