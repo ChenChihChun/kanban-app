@@ -1,9 +1,10 @@
 import './globals.css'
 import type { Metadata } from 'next'
+import { SessionProvider } from './providers'
 
 export const metadata: Metadata = {
   title: 'Kanban Board',
-  description: 'A simple kanban board app',
+  description: 'A kanban board with Google authentication',
 }
 
 export default function RootLayout({
@@ -13,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-TW">
-      <body>{children}</body>
+      <body>
+        <SessionProvider>{children}</SessionProvider>
+      </body>
     </html>
   )
 }
